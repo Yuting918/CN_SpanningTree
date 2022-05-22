@@ -76,7 +76,11 @@ class Switch(StpSwitch):
         elif message.root == self.root and (message.distance + 1) == self.distance and message.pathThrough == True:
             self.activeLinks.append(message.origin)
 
-        elif
+        elif message.root == self.root and (message.distance + 1) == self.distance and message.origin < self.switchTrough:
+            self.activeLinks.remove(self.switchTrough)
+            self.activeLinks.append(message.origin)
+            self.switchTrough = message.origin
+
 
         # TODO: This function needs to accept an incoming message and process it accordingly.
         #      This function is called every time the switch receives a new message.
