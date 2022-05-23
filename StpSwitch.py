@@ -1,4 +1,5 @@
-≠# Spanninng Tree project for GA Tech OMS-CS CS 6250 Computer Networks
+
+# Spanninng Tree project for GA Tech OMS-CS CS 6250 Computer Networks
 #
 # This defines a Spanning Tree Switch that serves as a Parent class to the switch class to be 
 # implemented by the student.  It abstracts details of sending messages and verifying topologies.

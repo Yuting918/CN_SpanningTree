@@ -19,6 +19,10 @@ class Message(object):
         self.destination = destinationID
         self.pathThrough = pathThrough
 
+    def __repr__(self):
+        return "root = " + str(self.root) + "; distance = " + str(self.distance) + "; origin = " + str(self.origin) + \
+               "; destination = " + str(self.destination) + "; pathThrough = " + str(self.pathThrough)
+
     # Member function that returns True if the message is properly formed, and False otherwise
     def verify_message(self):
         valid = True
@@ -28,5 +32,5 @@ class Message(object):
         if isinstance(self.root, int) is False or isinstance(self.distance, int) is False or \
                 isinstance(self.origin, int) is False or isinstance(self.destination, int) is False:
             valid = False
-        
+
         return valid

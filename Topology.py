@@ -40,6 +40,7 @@ class Topology(object):
             return
 
         if message.destination in self.switches[message.origin].links:
+            print(message)
             self.messages.append(message)
         else:
             print("Messages can only be sent to immediate neighbors")
@@ -65,5 +66,6 @@ class Topology(object):
             for switch in sorted(self.switches.keys()):
                 entry = self.switches[switch].generate_logstring()
                 entry += "\n"
+                print(entry)
                 out.write(entry)
             out.close()

@@ -29,9 +29,6 @@ from StpSwitch import *
 class Switch(StpSwitch):
 
     def __init__(self, idNum, topolink, neighbors):
-        # Invoke the super class constructor, which makes available to this object the following members:
-        # -self.switchID                   (the ID number of this switch object)
-        # -self.links                      (the list of swtich IDs connected to this switch object)
         super(Switch, self).__init__(idNum, topolink, neighbors)
         self.root = self.switchID
         self.distance = 0
@@ -39,49 +36,48 @@ class Switch(StpSwitch):
         self.switchTrough = self.switchID
         self.links = neighbors
 
-        # TODO: Define a data structure to keep track of which links are part of / not part of the spanning tree.
+    def __repr__(self):
+        return "The Switech is:\n root = " + str(self.root) + "; distance = " + str(self.distance) \
+               + "; activeLinks = " + str(self.activeLinks) + \
+               "; switchThrough = " + str(self.switchTrough)
 
     def send_initial_messages(self):
         for link in self.links:
-            message = Message(self.root,self.distance,self.switchID,link,False)
+            message = Message(self.root, self.distance, self.switchID, link, False)
             self.send_message(message)
-        # TODO: This function needs to create and send the initial messages from this switch.
-        #      Messages are sent via the superclass method send_message(Message msg) - see Message.py.
-        #      Use self.send_message(msg) to send this.  DO NOT use self.topology.send_message(msg)
         return
 
     def send_updated_massage(self):
         for link in self.links:
             if self.switchTrough == link:
-                self.send_message(self.root,self.distance,self.switchID,link,True)
+                message = Message(self.root, self.distance, self.switchID, link, True)
+                self.send_message(message)
             else:
-                self.send_message(self.root, self.distance, self.switchID, link, False)
+                message = Message(self.root, self.distance, self.switchID, link, False)
+                self.send_message(message)
 
     def process_message(self, message):
-        if message.root < self.root:
+        if message.root < self.root or (message.distance + 1) < self.distance:
             self.root = message.root
             self.distance = message.distance + 1
-            self.activeLinks.clear()
+            if self.switchTrough in self.activeLinks:
+                self.activeLinks.remove(self.switchTrough)
             self.activeLinks.append(message.origin)
             self.switchTrough = message.origin
             self.send_updated_massage()
 
-        elif message.root == self.root and (message.distance + 1) < self.distance:
-            self.distance = message.distance + 1
-            self.activeLinks.clear()
+        elif message.pathThrough and message.origin not in self.activeLinks:
             self.activeLinks.append(message.origin)
-            self.switchTrough = message.origin
+
+        elif not message.pathThrough and message.origin in self.activeLinks:
+            self.activeLinks.remove(message.origin)
             self.send_updated_massage()
 
-        elif message.root == self.root and (message.distance + 1) == self.distance and message.pathThrough == True:
-            self.activeLinks.append(message.origin)
-
-        elif message.root == self.root and (message.distance + 1) == self.distance and message.origin < self.switchTrough:
+        elif message.origin < self.switchTrough:
             self.activeLinks.remove(self.switchTrough)
             self.activeLinks.append(message.origin)
             self.switchTrough = message.origin
-
-
+            self.send_updated_massage()
         # TODO: This function needs to accept an incoming message and process it accordingly.
         #      This function is called every time the switch receives a new message.
         return
@@ -98,4 +94,9 @@ class Switch(StpSwitch):
         #      for switch 2 would have the following text:
         #      2 - 1, 2 - 3
         #      A full example of a valid output file is included (sample_output.txt) with the project skeleton.
-        return "switch log string, do not return a static string, build the log string"
+        #       "switch log string, do not return a static string, build the log string"
+        logs = []
+        for link in self.activeLinks:
+            logs.append(str(self.switchID) + " - " + str(link))
+        logString = ", ".join([str(log) for log in logs])
+        return logString
