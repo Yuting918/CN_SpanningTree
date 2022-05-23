@@ -37,14 +37,17 @@ class Switch(StpSwitch):
         self.links = neighbors
 
     def __repr__(self):
-        return "The Switech is:\n root = " + str(self.root) + "; distance = " + str(self.distance) \
+        return "%% Switch "+ str(self.switchID) +" %%  "+" root = " + str(self.root) + "; distance = " + str(self.distance) \
                + "; activeLinks = " + str(self.activeLinks) + \
-               "; switchThrough = " + str(self.switchTrough)
+               "; switchThrough = " + str(self.switchTrough) + "\n"
 
     def send_initial_messages(self):
+        print("####Begin initial massage\n")
         for link in self.links:
             message = Message(self.root, self.distance, self.switchID, link, False)
             self.send_message(message)
+            print(message)
+        print("end initial message##")
         return
 
     def send_updated_massage(self):
@@ -52,17 +55,27 @@ class Switch(StpSwitch):
             if self.switchTrough == link:
                 message = Message(self.root, self.distance, self.switchID, link, True)
                 self.send_message(message)
+                print("Sent Message")
+                print(message)
             else:
                 message = Message(self.root, self.distance, self.switchID, link, False)
                 self.send_message(message)
+                print("Sent Message")
+                print(message)
 
     def process_message(self, message):
+        print("&&& \nCurrent Switch is")
+        print(self)
+        print("###Process message")
+        print(message)
+        print("end message ###")
         if message.root < self.root or (message.distance + 1) < self.distance:
             self.root = message.root
             self.distance = message.distance + 1
             if self.switchTrough in self.activeLinks:
                 self.activeLinks.remove(self.switchTrough)
-            self.activeLinks.append(message.origin)
+            if message.origin not in self.activeLinks:
+                self.activeLinks.append(message.origin)
             self.switchTrough = message.origin
             self.send_updated_massage()
 
@@ -75,11 +88,12 @@ class Switch(StpSwitch):
 
         elif message.origin < self.switchTrough:
             self.activeLinks.remove(self.switchTrough)
-            self.activeLinks.append(message.origin)
+            if message.origin not in self.activeLinks:
+                self.activeLinks.append(message.origin)
             self.switchTrough = message.origin
             self.send_updated_massage()
-        # TODO: This function needs to accept an incoming message and process it accordingly.
-        #      This function is called every time the switch receives a new message.
+        print("Switched is updated to")
+        print(self)
         return
 
     def generate_logstring(self):
