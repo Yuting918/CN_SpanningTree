@@ -42,9 +42,12 @@ class Switch(StpSwitch):
                "; switchThrough = " + str(self.switchTrough) + "\n"
 
     def send_initial_messages(self):
+        print("####Begin initial massage\n")
         for link in self.links:
             message = Message(self.root, self.distance, self.switchID, link, False)
             self.send_message(message)
+            print(message)
+        print("end initial message##")
         return
 
     def send_updated_massage(self):
@@ -52,11 +55,20 @@ class Switch(StpSwitch):
             if self.switchTrough == link:
                 message = Message(self.root, self.distance, self.switchID, link, True)
                 self.send_message(message)
+                print("Sent Message")
+                print(message)
             else:
                 message = Message(self.root, self.distance, self.switchID, link, False)
                 self.send_message(message)
+                print("Sent Message")
+                print(message)
 
     def process_message(self, message):
+        print("&&& \nCurrent Switch is")
+        print(self)
+        print("###Process message")
+        print(message)
+        print("end message ###")
         if ((message.root < self.root) or ((message.root == self.root) and ((message.distance + 1) < self.distance))):
             self.root = message.root
             self.distance = message.distance + 1
@@ -83,21 +95,12 @@ class Switch(StpSwitch):
 
         elif message.root > self.root:
             self.send_updated_massage()
+
+        print("Switched is updated to")
+        print(self)
         return
 
     def generate_logstring(self):
-        # TODO: This function needs to return a logstring for this particular switch.  The
-        #      string represents the active forwarding links for this switch and is invoked 
-        #      only after the simulaton is complete.  Output the links included in the 
-        #      spanning tree by increasing destination switch ID on a single line. 
-        #      Print links as '(source switch id) - (destination switch id)', separating links 
-        #      with a comma - ','.  
-        #
-        #      For example, given a spanning tree (1 ----- 2 ----- 3), a correct output string 
-        #      for switch 2 would have the following text:
-        #      2 - 1, 2 - 3
-        #      A full example of a valid output file is included (sample_output.txt) with the project skeleton.
-        #       "switch log string, do not return a static string, build the log string"
         logs = []
         self.activeLinks.sort()
         for link in self.activeLinks:
