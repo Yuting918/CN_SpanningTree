@@ -82,7 +82,7 @@ class Switch(StpSwitch):
         elif message.pathThrough and message.origin not in self.activeLinks:
             self.activeLinks.append(message.origin)
 
-        elif message.root == self.root and (message.distance + 1) == self.distance:
+        elif message.root == self.root:
             if message.origin < self.switchTrough:
                 self.activeLinks.remove(self.switchTrough)
                 if message.origin not in self.activeLinks:
@@ -92,9 +92,21 @@ class Switch(StpSwitch):
             elif message.origin > self.switchTrough:
                 if message.origin in self.activeLinks:
                     self.activeLinks.remove(message.origin)
-
         elif message.root > self.root:
             self.send_updated_massage()
+
+        # elif message.root == self.root and (message.distance + 1) == self.distance:
+        #     if message.origin < self.switchTrough:
+        #         self.activeLinks.remove(self.switchTrough)
+        #         if message.origin not in self.activeLinks:
+        #             self.activeLinks.append(message.origin)
+        #         self.switchTrough = message.origin
+        #         self.send_updated_massage()
+        #     elif message.origin > self.switchTrough:
+        #         if message.origin in self.activeLinks:
+        #             self.activeLinks.remove(message.origin)
+        # elif message.root > self.root:
+        #     self.send_updated_massage()
 
         print("Switched is updated to")
         print(self)
