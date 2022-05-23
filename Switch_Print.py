@@ -93,6 +93,12 @@ class Switch(StpSwitch):
                 if message.origin in self.activeLinks:
                     self.activeLinks.remove(message.origin)
 
+        elif message.root == self.root and (message.distance - 1) == self.distance:
+            if message.origin > self.switchTrough and message.pathThrough == False:
+                if message.origin in self.activeLinks:
+                    self.activeLinks.remove(message.origin)
+
+
         elif message.root > self.root:
             self.send_updated_massage()
 
@@ -101,6 +107,18 @@ class Switch(StpSwitch):
         return
 
     def generate_logstring(self):
+        # TODO: This function needs to return a logstring for this particular switch.  The
+        #      string represents the active forwarding links for this switch and is invoked
+        #      only after the simulaton is complete.  Output the links included in the
+        #      spanning tree by increasing destination switch ID on a single line.
+        #      Print links as '(source switch id) - (destination switch id)', separating links
+        #      with a comma - ','.
+        #
+        #      For example, given a spanning tree (1 ----- 2 ----- 3), a correct output string
+        #      for switch 2 would have the following text:
+        #      2 - 1, 2 - 3
+        #      A full example of a valid output file is included (sample_output.txt) with the project skeleton.
+        #       "switch log string, do not return a static string, build the log string"
         logs = []
         self.activeLinks.sort()
         for link in self.activeLinks:
